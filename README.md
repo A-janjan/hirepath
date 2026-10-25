@@ -1,207 +1,418 @@
 # Hirepath — Job Search OS
 
-A beautiful, private job-search tracker you run on your own Ubuntu laptop at **http://localhost:2027**. It replaces the spreadsheet with a responsive web app, SQLite database, analytics, and charts.
+Hirepath is a self-hosted job-search tracking application that runs locally on your computer and is accessible at **http://localhost:2027**.
 
-- **Self-hosted and private:** no cloud account, sign-in, external API, CDN, fonts, or telemetry. Data stays on your laptop.
-- **Dockerized:** one command to build and start; the database is stored in `./data/` and survives container restarts.
-- **No app dependencies:** Python standard library + SQLite on the server; plain HTML/CSS/JavaScript in the browser.
-- **Honest metrics:** pending is not a rejection, no reply is not a response, and small samples are flagged rather than over-interpreted.
-- **Fictional demo data:** a banner labels the sample records; remove them before entering real applications.
+It helps you track job applications, daily effort, interview progress, response rates, and job-search strategy through a dashboard and analytics.
+
+## Key Features
+
+- **Private by default:** No cloud account, sign-in, external API, CDN, external fonts, or telemetry is required by the application.
+- **Self-hosted:** Your application records and analytics data stay on your own computer.
+- **Containerized deployment:** Docker provides a consistent setup across supported operating systems.
+- **Persistent storage:** SQLite stores your data in a local directory that survives container restarts and rebuilds.
+- **Lightweight architecture:** Python's standard library and SQLite power the backend; the frontend uses plain HTML, CSS, and JavaScript.
+- **Honest analytics:** Pending applications are not treated as rejections, silence is not automatically treated as a response, and small samples are flagged to discourage misleading conclusions.
+- **Fictional demo data:** Sample records let you explore the dashboard before entering your own information.
 
 ---
 
-## 1. Install on Ubuntu
+## 1. Requirements
 
-### Prerequisite: Docker Engine + Docker Compose v2
+Hirepath supports two ways to run the application.
 
-Install Docker Engine and the Docker Compose plugin using Docker's official Ubuntu instructions: <https://docs.docker.com/engine/install/ubuntu/>. Verify the tools are present:
+### Option A: Docker (recommended)
+
+Install the following:
+
+- Docker Engine or Docker Desktop, depending on your operating system.
+- Docker Compose v2.
+- A terminal or command-line environment.
+
+Verify the installation:
 
 ```bash
 docker --version
 docker compose version
 ```
 
-If you prefer Ubuntu packages, `docker.io` and `docker-compose-v2` may be available for your Ubuntu release. You may need to prefix Docker commands with `sudo`, or follow Docker's post-install instructions to use Docker as your normal user.
+If either command fails, complete the installation and configuration steps for your platform before continuing.
 
-### Start Hirepath
+Official Docker installation guides:
 
-1. Copy the `job-search-tracker` folder to your Ubuntu laptop.
-2. In a terminal, go into that folder:
+- [Docker Desktop](https://docs.docker.com/desktop/)
+- [Docker Engine](https://docs.docker.com/engine/install/)
 
-   ```bash
-   cd ~/job-search-tracker
-   ```
+On some systems, Docker commands may require administrator privileges or additional permission configuration.
 
-3. Start the app:
+### Option B: Run directly with Python
 
-   ```bash
-   ./run.sh
-   ```
+For a lightweight local trial, install **Python 3.10 or newer**.
 
-   On first run, Docker builds the image. An internet connection is needed only to download the base image; the app itself has no external runtime dependencies.
+This option avoids Docker but requires the appropriate Python runtime and any other prerequisites specified by the project.
 
-4. Open **http://localhost:2027** in your browser.
+---
 
-The Compose configuration binds the app to **127.0.0.1 only**. Other computers on the network cannot reach it by default.
+## 2. Installation and Startup
 
-### Stop, start, update
+### Step 1: Obtain the project
+
+Clone the repository or download and extract the project files.
+
+If you use Git:
 
 ```bash
-# Stop the app; data is kept
-docker compose down
+git clone <repository-url>
+cd <project-directory>
+```
 
-# Start again
-docker compose up -d
+Replace the placeholders with the actual repository URL and directory name.
 
-# Rebuild after updating app files
+### Step 2: Start with Docker
+
+From the project root, run:
+
+```bash
 docker compose up -d --build
+```
 
-# Follow server logs
+Docker builds the application image if needed and starts the configured services in the background.
+
+If the project provides a startup script compatible with your environment, you may use that instead.
+
+On the first run, an internet connection may be required to download container images and dependencies. Subsequent startup may work offline if all required images and resources are already available locally.
+
+### Step 3: Open the application
+
+Visit:
+
+**http://localhost:2027**
+
+The application should be available through your local browser once the server has started successfully.
+
+The provided Compose configuration binds the application to `127.0.0.1`, restricting access to the local computer by default.
+
+### Step 4: Verify the startup
+
+Check the service status:
+
+```bash
+docker compose ps
+```
+
+If the application does not start, inspect its logs:
+
+```bash
 docker compose logs -f
 ```
 
-You can also stop the foreground app with `Ctrl+C` if you use the no-Docker fallback below.
+Use `Ctrl+C` to stop following the logs. This does not stop the application.
 
-### No-Docker fallback
+### Running without Docker
 
-For a quick local trial, Python 3.10+ is sufficient:
+If you prefer the direct Python setup, open a terminal in the project directory and run:
 
 ```bash
-cd ~/job-search-tracker
-python3 server.py
+python server.py
 ```
 
-Then open **http://localhost:2027**. This uses the same SQLite data file under `./data/`. Docker remains the recommended long-term setup.
+Depending on your environment, the Python executable may instead be named `python3` or `py`.
+
+Then open http://localhost:2027.
+
+This mode uses the application's configured SQLite data file. Docker remains the recommended option for a more consistent deployment.
 
 ---
 
-## 2. First-run setup
+## 3. First-Run Setup
 
-Hirepath starts with a small set of **fictional** sample applications and daily activity. This makes the dashboard and charts useful before you have any personal records.
+Hirepath starts with a small set of **fictional sample applications and daily activity records**. These provide meaningful dashboard charts and analytics before you have entered your own data.
 
-1. Explore the Overview, funnel, category comparisons, and Insights.
-2. Open **Settings → Data management → Remove sample data** before entering real applications. The demo records have a visible warning banner and sample markers.
-3. In **Settings**, edit your targets, categories, statuses, resume versions, job sources, seniority, work-arrangement, and location lists. Set the **job-search start date** to the date you actually began (or are beginning) your search so the show-up rate uses the right calendar window.
-4. Add your first real application from the **Add application** button.
+Follow these steps to configure your workspace:
 
-Removing the demo data deletes only rows marked as sample. Your non-sample application rows and daily-log rows are retained. The demo reload action does not overwrite a daily log that already exists on the same date.
+1. Explore the Overview, application funnel, category comparisons, and Insights.
+2. Open **Settings → Data management → Remove sample data** before entering real applications.
+3. Configure your targets, application categories, statuses, resume versions, job sources, seniority levels, work arrangements, and location lists.
+4. Set the job-search start date to the date you actually began tracking your search.
+5. Add your first real application using **Add application**.
+
+Removing sample data deletes only records marked as samples. Non-sample application and daily-log records are retained.
+
+Reloading demo data does not overwrite an existing daily log for the same date.
 
 ---
 
-## 3. Daily use (about 2–5 minutes)
+## 4. Daily Workflow
 
-### When you apply
+Hirepath is designed to make daily job-search tracking take approximately **2–5 minutes**, excluding the time spent applying for jobs or preparing for interviews.
 
-Use **Add application** and enter company, role, category, date applied, current status, resume version, and the three strategy flags: tailored, cover letter, referral. Add the job URL and other context if useful. There is one record per unique application.
+### When you apply for a job
 
-When the process moves forward, edit the same application and update its status. Add the **invited** and **completed** dates for HR, technical, and final interviews as they happen. These dates preserve stage history and let the app distinguish an invitation from an interview attended. Add the offer date or close date when appropriate.
+Select **Add application** and record:
+
+- Company and job title.
+- Application category.
+- Application date and current status.
+- Resume version.
+- Whether the resume was tailored.
+- Whether you submitted a cover letter.
+- Whether you used a referral.
+- Job posting URL and any relevant notes.
+
+Create one record per unique application.
+
+When the process advances, update the existing record rather than creating a duplicate. Record interview invitation and completion dates as they occur.
+
+The application supports HR, technical, and final interview stages, as well as offer and closure dates.
 
 ### At the end of a job-search session
 
-Open **Daily Log → Log today**. Applications submitted, tailored applications, cover letters, and attended interviews are automatically calculated from the Applications list. You only enter the other activity: new positions discovered, follow-ups, recruiter/networking messages, minutes, and a note or lesson.
+Open **Daily Log → Log today**.
 
-A zero-application day can still be an active day: sourcing, networking, interview preparation, or learning counts. Use the log to capture that work, not to duplicate application data.
+The application automatically calculates:
+
+- Applications submitted.
+- Tailored applications.
+- Cover letters submitted.
+- Interviews attended.
+
+Record the remaining activity manually:
+
+- New positions discovered.
+- Follow-ups completed.
+- Recruiter and networking messages.
+- Time invested in minutes.
+- Notes, lessons, and observations.
+
+A day without applications can still be productive. Sourcing opportunities, networking, interview preparation, and learning all contribute to the job search.
+
+Use the Daily Log to capture this work without duplicating application data.
 
 ### Weekly review
 
-- Check your weekly applications against the target.
-- Review follow-ups due and old pending applications.
-- Compare stage conversion in **Funnel & Rates**.
-- Look for category and strategy patterns, while noting sample sizes.
-- Pick one experiment for the next 2–3 weeks (for example: tailor every application in one category, or revise one resume version).
+At the end of each week:
+
+1. Compare your application count with your weekly target.
+2. Review overdue follow-ups and long-pending applications.
+3. Examine stage conversion and rejection rates.
+4. Compare categories and application strategies, taking sample sizes into account.
+5. Choose one experiment for the next two or three weeks.
+
+Examples include tailoring every application in a specific category or testing a revised resume version.
 
 ---
 
-## 4. How to read the analytics
+## 5. Understanding the Analytics
 
-### Pending is not failure
+### Pending applications are not failures
 
-Applications still awaiting a decision remain **Pending**, including applications that have received an interview invitation. A long wait may trigger a follow-up reminder, but the app does **not** automatically mark silence as rejection. **Position closed / no response** is a separate outcome class.
+Applications awaiting a decision remain **Pending**, including applications for which an interview invitation has been received.
 
-### Funnel rates and rejection rates answer different questions
+A long wait may trigger a follow-up reminder, but silence alone does not automatically count as rejection.
 
-- **Conversion:** applications that reached the next stage ÷ applications that reached the prior eligible stage. Example: technical invitations ÷ HR invitations.
-- **Stage rejection:** explicit rejections at a given stage ÷ applications that reached that stage.
-- **Resume-screen rejection:** explicit resume rejections ÷ applications with a known outcome (pending excluded).
-- **Overall explicit rejection:** all explicit rejections ÷ applications with a known outcome.
-- **Response rate:** an application counts as a response if an interview invitation, explicit rejection, or offer is recorded. A no-response closure is not a response.
-- **Offer rate:** offers ÷ applications in the selected application cohort.
+**Position closed / no response** is a separate outcome classification.
 
-Counts are shown alongside percentages. If the denominator is zero, the app displays a dash rather than inventing a rate.
+This distinction helps prevent unresolved applications from distorting rejection and response statistics.
+
+### Funnel conversion and rejection rates
+
+These metrics answer different questions.
+
+- **Stage conversion rate:** Applications that reached the next stage divided by applications that reached the previous eligible stage. For example, technical interview invitations divided by HR interview invitations.
+- **Stage rejection rate:** Explicit rejections at a particular stage divided by applications that reached that stage.
+- **Resume-screen rejection rate:** Explicit resume rejections divided by applications with a known outcome, excluding pending applications.
+- **Overall explicit rejection rate:** All explicit rejections divided by applications with a known outcome.
+- **Response rate:** Applications with a recorded interview invitation, explicit rejection, or offer divided by the relevant application cohort. A no-response closure is not considered a response.
+- **Offer rate:** Offers divided by applications in the selected application cohort.
+
+Counts are displayed alongside percentages. When a denominator is zero, the application displays a dash instead of fabricating a rate.
 
 ### Cohorts, maturity, and sample size
 
-Use **Change filter** to compare applications submitted within a date range. Recent applications have not had as much time to receive replies, so the app also shows a **mature cohort** rate based on applications at least the configured maturity window old. Set the maturity window in Settings to reflect the typical response cycle for the roles you target.
+Use **Change filter** to analyze applications submitted within a selected date range.
 
-Comparisons below the minimum sample size are labelled **Low n / Insufficient data**; somewhat larger groups remain an **Early signal**. These are guideposts, not statistical guarantees. Do not make a major strategy change based on a tiny sample or a difference of a few percentage points.
+Recent applications have had less time to receive responses. Hirepath therefore also provides a **mature cohort** rate based on applications that are at least the configured maturity window old.
 
-### Habit metrics
+Configure the maturity window in Settings to reflect the typical response cycle for your target roles.
 
-- **Active day:** applications, sourcing, follow-ups, messages, interview activity, time, or a note was recorded.
-- **Show-up rate:** active days ÷ elapsed days since the start of your search.
-- **Daily target attainment:** days with at least the configured daily application target ÷ active days.
-- **Weekly target chart:** submitted applications by week compared to your weekly target.
-- **Time invested:** minutes explicitly logged in Daily Log; application data is not used to guess effort time.
+Small samples are labeled **Low n / Insufficient data**, while somewhat larger but still limited samples may be labeled **Early signal**.
 
-Consistency is meant to support a sustainable routine, not to reward overwork. A planned rest day will reduce the calendar show-up percentage; choose your start date and targets to suit the rhythm you want to maintain.
+These labels are practical warnings, not statistical guarantees.
 
----
+Avoid major strategy changes based on a small number of applications or differences of only a few percentage points.
 
-## 5. Data, backups, and privacy
+### Habit and consistency metrics
 
-- The SQLite database is `./data/jobsearch.db`. Docker mounts this folder to `/app/data` inside the container, so rebuilding or replacing the container does not remove your records.
-- In **Settings → Data management → Export backup**, download a JSON copy periodically. Keep the backup somewhere separate from the project folder (for example, an encrypted drive).
-- Use **Import backup** to replace the current records and settings with a saved JSON export. Import is a full replacement, not a merge.
-- Removing a sample set is safe and selective. **Reset everything** is destructive: it wipes records and settings and returns to the demo state.
-- The server is intended for one trusted user on the same laptop. It has no login. Keep the port bound to localhost; do not remove the `127.0.0.1:` prefix from the Compose port mapping or expose it through a router/proxy.
-- `./data/` is excluded from the Docker build context. Never share the database or a backup unless you intend to share personal job-search information.
+- **Active day:** A day on which applications, sourcing, follow-ups, messages, interview activity, time, or a note was recorded.
+- **Show-up rate:** Active days divided by elapsed calendar days since the job-search start date.
+- **Daily target attainment:** Days meeting the configured daily application target divided by active days.
+- **Weekly target chart:** Applications submitted per week compared with the weekly target.
+- **Time invested:** Minutes explicitly recorded in the Daily Log.
+
+The application is intended to support a sustainable routine rather than reward overwork. Planned rest days reduce the calendar-based show-up rate, so configure your start date and targets according to your intended routine.
 
 ---
 
-## 6. Current fields
+## 6. Data Storage, Backups, and Privacy
 
-### Applications
+### Where data is stored
 
-Application ID; company; title; configurable category; seniority; location/country; remote/hybrid/onsite; posting URL; source; discovery date; applied date; status; follow-up date; notes; resume version; cover letter; referral; tailored; HR invitation/completion dates; technical invitation/completion dates; final invitation/completion dates; offer date; closed date.
+The default SQLite database is:
 
-### Daily Log
+```text
+./data/jobsearch.db
+```
 
-Date; new positions discovered; applications submitted (automatic); tailored applications (automatic); cover letters (automatic); follow-ups; recruiter/networking messages; interviews attended (automatic from completion dates); minutes; notes and lessons.
+In Docker deployments, this directory is mounted into the container at `/app/data`.
+
+Consequently, rebuilding or replacing the application container should not delete your records, provided the configured persistent storage is preserved.
+
+### Exporting a backup
+
+Open **Settings → Data management → Export backup** to download a JSON backup containing your application data and settings.
+
+Create backups regularly and store them somewhere separate from the project directory. For additional protection, consider encrypted storage.
+
+### Importing a backup
+
+Use **Import backup** to restore a previously exported JSON backup.
+
+**Important:** Importing a backup replaces the current records and settings. It is not a merge operation. Export your current data before importing another backup.
+
+### Removing sample data versus resetting everything
+
+- **Remove sample data:** Deletes records marked as samples while preserving non-sample records.
+- **Reset everything:** Destructively removes records and settings and returns the application to its demo state.
+
+Use the reset option only when you intend to start over.
+
+### Security considerations
+
+Hirepath is designed for one trusted user on the local computer. The application has no login system.
+
+- Keep the service bound to `127.0.0.1` unless you have deliberately configured and secured another access method.
+- Do not expose the application directly to a public network or the internet.
+- Do not remove the localhost restriction from the Docker port mapping without understanding the security implications.
+- Protect the project directory, database, and backups because they contain personal job-search information.
+- Avoid sharing database files or backups unless you explicitly intend to disclose their contents.
+
+Local hosting reduces exposure to external services, but it does not by itself encrypt local files or protect against malware or other users with access to your computer.
 
 ---
 
 ## 7. Troubleshooting
 
-### Port 2027 is already in use
+### The application is not accessible
 
-Find the process occupying it, stop that process, or change both the host side of the Compose mapping and the `PORT` setting. To retain the requested address, stop the competing service and run `docker compose up -d` again.
+1. Check whether the containers are running:
 
-### Docker says permission denied
+   ```bash
+   docker compose ps
+   ```
 
-Run the Docker commands with `sudo`, or apply Docker's official post-install steps to allow your user to access the Docker daemon. Log out and back in after changing Docker group membership.
+2. Inspect the logs:
 
-### Dashboard has only demo numbers
+   ```bash
+   docker compose logs --tail=100
+   ```
 
-Remove the sample records from **Settings → Data management** and add your own applications. The banner explicitly indicates when any sample rows remain.
+3. Confirm that the configured application port matches the address you are opening.
+4. Check whether another application is already using the port.
+5. Verify that the server started successfully before opening the browser.
 
-### I need to back up before updating
+### The configured port is already in use
 
-Use **Export backup**, then optionally copy `./data/jobsearch.db` while the container is stopped:
+Another application may already be listening on port `2027`.
+
+Either stop the conflicting service or change the host-side port mapping in the Compose configuration.
+
+For example, a mapping of `127.0.0.1:2028:2027` exposes the application at `http://localhost:2028` while retaining port `2027` inside the container.
+
+If the application also reads a `PORT` environment variable, distinguish the host port from the internal application port and configure them according to the project's actual implementation.
+
+### Docker reports a permission error
+
+Check that the Docker service is running and that your user has permission to access it.
+
+Depending on your platform and installation method, you may need administrator privileges or additional Docker configuration.
+
+Follow the official documentation for your environment rather than applying platform-specific permission changes blindly.
+
+### The dashboard shows only demo data
+
+Open **Settings → Data management** and remove the sample records.
+
+Then add your own applications. The application displays a warning when sample records remain.
+
+### Back up data before updating
+
+First export a JSON backup from the application.
+
+You can also copy the SQLite database while the container is stopped:
 
 ```bash
 docker compose down
+```
+
+```bash
 cp data/jobsearch.db "$HOME/jobsearch-backup-$(date +%F).db"
+```
+
+```bash
 docker compose up -d
 ```
 
+The example uses a Unix-like shell. On other platforms, use the equivalent file-copy operation for your environment.
+
+Do not delete the persistent data directory as part of an ordinary application update.
+
+### The application cannot start without internet access
+
+The application itself does not require external runtime services according to its intended architecture. However, a first-time Docker build may need to download images, and other setup steps may need to obtain dependencies.
+
+Prepare the required images and dependencies in advance if you need to operate in an offline environment.
+
 ---
 
-## Project files
+## 8. Project Structure
 
-- `server.py` — local HTTP server and JSON API
-- `store.py` — SQLite schema, persistence, import/export, and sample-data actions
-- `analytics.py` — cohort, funnel, rejection, activity, comparison, and insight calculations
-- `sample_model.py` — clearly fictional demo records
-- `web/` — responsive UI and dependency-free SVG charts
-- `Dockerfile`, `docker-compose.yml`, `run.sh` — container/build/start setup
-- `data/` — created at runtime; keep it private
+```text
+project/
+├── server.py
+├── store.py
+├── analytics.py
+├── sample_model.py
+├── web/
+├── Dockerfile
+├── docker-compose.yml
+├── run.sh
+└── data/
+```
+
+| File or directory | Purpose |
+|---|---|
+| `server.py` | Local HTTP server and JSON API |
+| `store.py` | SQLite schema, persistence, import/export, and sample-data operations |
+| `analytics.py` | Cohort, funnel, rejection, activity, comparison, and insight calculations |
+| `sample_model.py` | Clearly identified fictional demo records |
+| `web/` | Responsive interface and dependency-free SVG charts |
+| `Dockerfile` | Container image definition |
+| `docker-compose.yml` | Service configuration and startup settings |
+| `run.sh` | Convenience script for compatible environments |
+| `data/` | Runtime data directory; keep it private |
+
+The data directory is created at runtime and should be preserved when updating the application.
+
+---
+
+## 9. Design Principles
+
+Hirepath follows several principles:
+
+1. **Privacy first:** Keep job-search records under the user's control.
+2. **Low-friction tracking:** Make daily logging quick enough to sustain over time.
+3. **Honest measurement:** Distinguish pending outcomes, explicit rejections, and non-responses.
+4. **Evidence over intuition:** Use cohort analysis, stage conversion, and sample-size warnings to evaluate strategy.
+5. **Data ownership:** Support exporting, backing up, and restoring user data.
+6. **Portable deployment:** Prefer a consistent containerized setup while retaining a lightweight Python execution option.
+
+Hirepath is a personal job-search management tool, not a guarantee of employment or a statistical prediction system. Its analytics are most useful when records are accurate, outcomes are updated consistently, and conclusions are proportional to the available evidence.
