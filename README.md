@@ -6,6 +6,7 @@ It helps you track job applications, daily effort, interview progress, response 
 
 ![ui-overview](./assets/ui-overview.png)
 
+
 ## Key Features
 
 - **Private by default:** No cloud account, sign-in, external API, CDN, external fonts, or telemetry is required by the application.
