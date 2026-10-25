@@ -61,8 +61,8 @@ Clone the repository or download and extract the project files.
 If you use Git:
 
 ```bash
-git clone <repository-url>
-cd <project-directory>
+git clone https://github.com/A-janjan/hirepath.git
+cd hirepath
 ```
 
 Replace the placeholders with the actual repository URL and directory name.
