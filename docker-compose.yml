@@ -1,0 +1,12 @@
+services:
+  hirepath:
+    build: .
+    image: hirepath:local
+    container_name: hirepath
+    ports:
+      - "127.0.0.1:2027:2027"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TZ=${TZ:-Europe/Helsinki}
+    restart: unless-stopped

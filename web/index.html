@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hirepath — a private, self-hosted job search tracker and analytics dashboard.">
+  <title>Hirepath · Job Search OS</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17l5-5 4 3 8-9"/><path d="M16 6h4v4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">Hirepath</div>
+          <div class="brand-tag">Job Search OS</div>
+        </div>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="sidebar-foot">
+        <div class="streak-card">
+          <div class="streak-top">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s4 4 4 8a4 4 0 0 1-8 0c0-1 .5-2 1-2.5C9 10 8 12 8 14a4 4 0 0 0 8 0c0-3-4-6-4-12z"/></svg>
+            Consistency
+          </div>
+          <div class="streak-num" id="side-streak">0 <small>day streak</small></div>
+          <div class="streak-sub" id="side-streak-sub">Log your activity daily</div>
+        </div>
+        <div class="foot-row">
+          <div class="foot-note">Private &amp; local<br>Your data never leaves this machine.</div>
+          <button class="icon-btn" data-action="theme" title="Toggle light / dark theme" id="theme-btn"></button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="flex" style="min-width:0">
+          <button class="btn btn-icon btn-ghost menu-toggle" data-action="menu" title="Menu" id="menu-btn"></button>
+          <div style="min-width:0">
+            <h1 id="page-title">Overview</h1>
+            <p class="sub" id="page-sub">Loading your job search…</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <div class="date-pill" id="date-pill"></div>
+          <button class="btn" data-action="refresh" title="Reload data" id="refresh-btn"></button>
+          <button class="btn btn-primary" data-action="add-application" id="add-btn"></button>
+        </div>
+      </header>
+      <main class="view" id="view">
+        <div class="loading"><div class="spinner"></div><div>Loading your dashboard…</div></div>
+      </main>
+    </div>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+  <script src="/charts.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
