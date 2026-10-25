@@ -4,6 +4,8 @@ Hirepath is a self-hosted job-search tracking application that runs locally on y
 
 It helps you track job applications, daily effort, interview progress, response rates, and job-search strategy through a dashboard and analytics.
 
+![ui-overview](./assets/ui-overview.png)
+
 ## Key Features
 
 - **Private by default:** No cloud account, sign-in, external API, CDN, external fonts, or telemetry is required by the application.
